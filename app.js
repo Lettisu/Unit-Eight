@@ -1,46 +1,47 @@
 const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const db = require('.config/database')
+const sequelize = require("./models").sequelize
 
-//Setting HTML to view 
-app.set('view engine', 'pug');
-app.use(bodyParser.urlencoded({
+const app = express();
+//const open = require('open');
+
+app.use(express.json());
+app.use(express.urlencoded({
     extended: false
 }));
 app.use('/static', express.static('public'));
+app.use('/books', require('./routes/bookRoutes'));
 
-//Test database
-db.authenticate()
-    .then(() => console.log('connected'))
-    .catch(err => console.log('Error: ' + err))
+//Setting HTML to view engine  to use pug
+app.set('view engine', 'pug');
+
 //Redirects browser to the /books route
-app.get('/', (res) =>
-    res.redirect('/index')
-);
+sequ
+app.get('/', (req, res) => res.redirect('/books'));
 //Books route
-app.use('/index', require('./routes/index'));
+//app.use('/index', require('./routes/index'));
 
 
-//Logs 404 error to console
-app.use((req, res) => {
-    const err = new Error('Page Not Found');
-    err.status(404);
-    res.render('page-not-found');
-});
+//Logs 404 error to console when user navigates to non-existing route
+// app.use((req, res) => {
+//     const err = new Error('Page Not Found');
+//     err.status = 404;
+//     console.error(err);
+//     res.status(404);
+//     res.render('page-not-found');
+// });
 //Logs server error
 app.use((err, req, res, next) => {
-    console.log(err.message);
-    res.status(err.status);
-    if (err.status === undefined) {
-        console.log('Error 500-Internal Server Error')
-    }
-    res.render('error', {
-        error: err
-    })
-})
-
-db.sync()
-    .then(() => {
-        app.listen(process.env.PORT || 3000, () => console.log('Application running on localhost:3000'));
+    console.error(err);
+    res.status(500);
+    res.render('error');
+});
+//Localhost:3000
+const PORT = process.env.PORT || 3000;
+sequelize.sync().then(() => {
+    app.listen(PORT, () => {
+        console.log(`application running on port ${PORT}`);
     });
+});
+// app.listen(PORT, console.log(`The application is running on http://localhost:${PORT}`));
+//Opens application in users default browser
+//open(`http://localhost:${PORT}`);

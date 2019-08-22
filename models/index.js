@@ -1,87 +1,37 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../config/database');
-const Books = require('../models/books');
-const Sequelize = require('sequlize');
-const Op = Sequelize.Op;
+'use strict';
 
-//This route will show all books
-router.get('/', (req, res) => {
-    Books.findAll()
-    .then(books => {
-        res.prependListener('index', {
-            books: books
-        })
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
+const db = {};
 
-    })
-        .cath(err => console.log(err))
-});
-//This route will show new books
-router.get('/new', (req, res) => res.render('new book'));
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
-//Route to add books to database
-router.post('/new', (req, res) => {
-    let {
-        title,
-        author,
-        genre,
-        year
-    } = req.body;
-    Books.create({
-        title,
-        author,
-        genre,
-        year
-    })
-        .then(() => res.redirect('/'))
-        .catch(err => {
-            if (err.name === "SequelizeValidationError") {
-                res.render('new-book', {
-                    err: err.errors
-                })
-            } else {
-                throw err;
-            }
-        })
-        .catch(err => console.log(err))
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
-//Route to update books
-router.post('/:id', (req, res) => {
-    Books.findById(req.params.id)
-        .then(Book => {
-            if (Book) {
-                return Book.update(req.body);
-            } else {
-                res.render('error');
-            }
-        })
-        .then(() => res.redirect('/')).catch(err => {
-            if (err.name === SequelizeValidationError) {
-                let.book = Books.build(req.body);
-                book.dataValue.id = req.params.id;
-                console.log(book)
-                res.render('update-book', {
-                    book,
-                    err: err.errors
-                });
-            } else {
-                throw err;
-            }
-        })
-        .catch(err => console.log(err))
-});
-//Route to delete books
-router.post('/:id/delete', (req, res) => {
-    Books.findById(req.params.id)
-        .then(Book => {
-            if (Book) {
-                return Book.destroy();
-            } else {
-                res.render('error');
-            }
-        })
-        .ten(() => res.redirect('/'))
-        .catch(err => console.log(err))
-});
-module.exports = router;
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
