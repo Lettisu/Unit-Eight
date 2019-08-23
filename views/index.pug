@@ -8,10 +8,15 @@ block content
       
   table
     thead
-      each book in books
+       tr
+       th Title 
+       th Author
+       th Genre
+       th Year
+       each book in books
         tr
-          th 
+          td 
             a(href=`/books/${book.id}`)= book.title
-          th #{book.dataValues.author}
-          th #{book.dataValues.genre}
-          th #{book.dataValues.year}
+          td #{book.author}
+          td #{book.genre}
+          td #{book.year}
