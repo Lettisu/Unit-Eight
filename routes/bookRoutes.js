@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Books = require('../models/Books');
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'library.db'
-});
-// (async () => {
+const Books = require('../models').Book;
+// const Sequelize = require('sequelize');
+// const sequelize = new Sequelize({
+//     // dialect: 'sqlite',
+// storage: 'library.db',
+// operatorAliases: false
+// });
+//  (async () => {
 //     try {
 //         await sequelize.authenticate();
 //         console.log('Connection to the database successful!');
@@ -23,7 +24,7 @@ const sequelize = new Sequelize({
 router.get('/', (req, res) => {
     Books.findAll()
         .then(books => {
-            req.render('index', { books: books });
+            res.render('index', { books: books });
         })
         .catch(err => console.log(err))
 });

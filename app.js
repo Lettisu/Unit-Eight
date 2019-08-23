@@ -15,7 +15,7 @@ app.use('/books', require('./routes/bookRoutes'));
 app.set('view engine', 'pug');
 
 //Redirects browser to the /books route
-sequ
+//sequ
 app.get('/', (req, res) => res.redirect('/books'));
 //Books route
 //app.use('/index', require('./routes/index'));
