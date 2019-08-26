@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const app = express();
 const sqlite = require("sqlite3");
 const path = require("path");
-const db = require('./config/config');
+const db = require('./config/database');
 
 
 
