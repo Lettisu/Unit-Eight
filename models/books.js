@@ -1,36 +1,7 @@
-// "use strict";
-// module.exports = (sequelize, DataTypes) => {
-//     const Books = sequelize.define('Book', {
-//         title: {
-//             type: DataTypes.STRING,
-//             validate: {
-//                 notEmpty: {
-//                     msg: "Title is required"
-//                 }
-//             }
-//         },
-//         author: {
-//             type: DataTypes.STRING,
-//             validate: {
-//                 notEmpty: {
-//                     msg: "Author is required"
-//                 }
-//             }
-//         },
-//         genre: DataTypes.STRING,
-//         year: {
-//             type: DataTypes.INTEGER,
-//         }
-
-//     });
-//     return Books;
-// };
-"use strict";
-
 const Sequelize = require('sequelize');
-const db = require('../config/database');
+const db = require('../config/config');
 
-const Books = db.define('books', {
+const Books = db.define('book', {
     title: {
         type: Sequelize.STRING,
         validate: {
@@ -53,6 +24,6 @@ const Books = db.define('books', {
     year: {
         type: Sequelize.INTEGER
     }
-
 });
-module.exports = Books
+
+module.exports = Books;
